@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			overflow: hidden;
+			height: 600px;
+		}
+		canvas {
+			background: #000;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="1366px" height="638px"></canvas>
+	<script>
+		var canvas = document.getElementById('canvas');
+
+		var ctx = canvas.getContext('2d');
+
+		var count = 4;
+		var tails = 10;
+
+		var dotArray = [];// [{},{},{}]
+		var oldArray = [];// [[{},{},{}],[{},{},{}]]
+
+		for( var i = 0; i< count;i++ ){
+			dotArray.push({
+				x:rnd(0,canvas.offsetWidth),
+				y:rnd(0,canvas.offsetHeight),
+				speedX:rndSymble()*rnd(2,4),
+				speedY:rndSymble()*rnd(2,4)
+			})
+		}
+
+		setInterval(function(){
+			clear();
+
+			ctx.beginPath();
+			ctx.strokeStyle = 'rgba(0,0,255,1)';
+
+			oldArray.push(
+				JSON.parse(
+					JSON.stringify({
+						dot:dotArray
+					})
+				).dot
+			);
+
+			if( oldArray.length > tails ){
+				oldArray.shift();
+			}
+
+			// oldArray.push(dotArray);
+
+			dotArray.forEach(function(dot,dotIndex){
+				var {
+					x,y,speedX,speedY
+				} = dot;
+
+				dot.x += speedX;
+				dot.y += speedY;
+
+				if( 
+					dot.x < 0 || 
+					dot.x > canvas.offsetWidth
+				){
+					dot.speedX *= -1;
+
+				} else if(
+					dot.y < 0 ||
+					dot.y > canvas.offsetHeight
+				){
+					dot.speedY *= -1;
+				}
+			})
+
+			ctx.stroke();
+
+			oldArray.forEach(function(dotArray,index){
+
+				ctx.beginPath();
+				ctx.strokeStyle = `rgba(0,0,255,${(index+1)/tails})`
+
+				dotArray.forEach(function(dot,dotIndex){
+					var {
+						x,y,speedX,speedY
+					} = dot;
+
+					if( dotIndex == 0 ){
+						ctx.moveTo(x,y)
+					} else if( dotIndex < dotArray.length ){
+						ctx.lineTo(x,y)
+					}
+
+					if( dotIndex == dotArray.length - 1 ){
+						ctx.closePath();
+					}
+				})
+
+				ctx.stroke();
+			})
+		},16)
+
+		function rndSymble(){
+			return Math.random() > 0.5 ? -1 : 1;
+		}
+
+		function rnd(n,m){
+			return parseInt(Math.random()*(m-n)+n);
+		}
+
+		function clear(){
+			ctx.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		.wrapper{
+			width: 600px;
+			height: 200px;
+			/*border: 2px solid black;*/
+			margin: 30px auto;
+			position: relative;
+			perspective: 800px;
+		}
+
+		.wrapper > div{
+			width: 200px;
+			height: 200px;
+			background-color: green;
+			text-align: center;
+			line-height: 200px;
+			font-size: 30px;
+			color: white;
+			font-weight: bolder;
+			position: absolute;
+			left: 200px;
+			top: 0;
+			transition: 0.7s;
+		}
+
+		.current{
+			z-index: 300;
+		}
+
+		.left1{
+			transform: translateX(-150px) rotateY(50deg);
+			z-index: 200;
+			opacity: 0.8
+		}
+
+		.left2{
+			transform: translateX(-270px) rotateY(70deg);
+			z-index: 100;
+			opacity: 0;
+		}
+
+		.right1{
+			transform: translateX(150px) rotateY(-50deg);
+			z-index: 200;
+			opacity: 0.8
+		}
+
+		.right2{
+			transform: translateX(270px) rotateY(-70deg);
+			z-index: 100;
+			opacity: 0;
+		}
+
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div>1</div>
+		<div>2</div>
+		<div>3</div>
+		<div>4</div>
+		<div>5</div>
+	</div>
+	<script>
+		var aBlock = document.querySelectorAll('.wrapper > div');
+
+		var classArray = ['current','right1','right2','left2','left1'];
+
+		var bReady = true;
+
+		document.onkeyup = function(ev){
+
+			if( !bReady ) return;
+
+			if( ev.keyCode != 37 &&  ev.keyCode != 39) return;
+
+			bReady = false;
+
+			if( ev.keyCode == 37 ){ // 左键
+				classArray.unshift(classArray.pop())
+			} else if( ev.keyCode == 39 ){ // 右键
+				classArray.push(classArray.shift())
+			}
+
+			setClass();
+		}
+
+		function setClass(){
+			for (var i = aBlock.length - 1; i >= 0; i--) {
+				aBlock[i].className = classArray[i];
+			}
+		}
+
+		setClass();
+
+		aBlock[2].addEventListener('transitionend',function(){
+			bReady = true;
+		},false)
+
+	</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
